@@ -25,12 +25,6 @@ Features illustrated by this example:
 - **Fallback message if a command is not recognized**
 - Uses the "node-sparky" library to requests the Webex Teams API
 
-This bot can be run as is with either a Developer or a Bot access token 
-
-Invite _inspect@webex.bot_ to meet the bot.
-
-![](docs/img/bot-inspect-welcome.png)
-
 
 
 ## [roomId](examples/roomid-phantom.js)
@@ -44,10 +38,6 @@ Features illustrated by this example:
 - Fallback message if a command is not recognized
 - **Send a direct message and leaves the room**
 - Uses "node-sparky" library to interact with Webex Teams
-
-Invite _roomid@webex.io_ to meet the bot.
-
-![](docs/img/bot-roomId.png)
 
 
 
@@ -65,10 +55,6 @@ Features illustrated by this example:
 
 Note that this webhook must be run with a personal access token (from a fake Webex Teams account), because the bot must be able to fetch all messages from spaces, not only those for which bot is mentionned.
 
-Invite _stats@chatbot.land_ to meet the bot.
-
-![](docs/img/bot-room-stats.png)
-
 
 
 ## [events](examples/devnet/bot.js)
@@ -84,10 +70,6 @@ Features illustrated by this example:
  - **Markdown formatting with lists and hyperlinks**
 - Uses "node-sparky" library to wrap calls to the Webex Teams REST API
 
-Invite _CiscoDevNet@webex.bot_ to meet the bot.
-
-![](docs/img/bot-ciscodevnet-next.png)
-
 
 
 ## [helloworld](examples/helloworld.js)
@@ -100,10 +82,6 @@ Features illustrated by this example:
 - Fallback message if a command is not recognized
 - **Markdown formatting with mention**
 - Leverages the "node-sparkclient" library to wrap calls to the Webex Teams REST API
-
-This bot can be run as is with either a Developer or a Bot access token 
-
-![](docs/img/bot-helloworld.png)
 
 
 
