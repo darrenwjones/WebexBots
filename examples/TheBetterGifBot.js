@@ -21,6 +21,8 @@ var Utils = {};
 module.exports = Utils;
 var fs = require('fs');
 var users = [];
+const sqlite3 = require('sqlite3').verbose();
+var db;
 
 //
 // Fallback command
@@ -31,16 +33,19 @@ bot.onCommand("fallback", function (command) {
 	
 function fallbackCommand(command){
 
-    if (!users.includes(command.message.personEmail)) {
-    
-	users[users.length] = command.message.personEmail;    
-	fs.appendFile('users.txt', users[users.length-1] + '\n', function (err) {
-            if (err) {
-                console.log("WARNING: Could not append user email to file");
-            }
-        });
-    }
+    db = new sqlite3.Database('TheBetterGifBot.db', (err) => {
+        if (err) {
+            console.error(err.message);
+        }
+    });
 
+    db.run("INSERT INTO users VALUES(?, 0) ON CONFLICT(email) DO UPDATE SET uses=(uses + 1)", [command.message.personEmail], function(err) {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+    });
+    
     if (command == null) {
         
 	client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
