@@ -104,3 +104,33 @@ Features illustrated by this example:
 This bot can be run as is with either a Developer or a Bot access token 
 
 ![](docs/img/bot-helloworld.png)
+
+
+
+## [TheBetterGifBot](examples/TheBetterGifBot.js)
+
+A simple template to start from.
+
+Features illustrated by this example:
+- Calls Giphy API and picks a random gif from a result of 10 on every command
+- Fallback message if command is unreadable of the API returns no results
+- **Markdown formatting with mention**
+- Leverages the "node-sparkclient" library to wrap calls to the Webex Teams REST API
+
+This bot can be run as is with either a Developer or a Bot access token
+
+
+
+## [LikeBot](examples/LikeBot.js)
+
+A simple template to start from.
+
+Features illustrated by this example:
+- Ability to like/dislike objects/users with the command "{Object/User} like/dislike"
+- "Scoreboard" command that displays top 10 liked objects/users
+- Ability to trigger fights from you against other users with the command "fight {User}"
+- Ability to wager on these fights with the command "wager {User} {Amount}"
+- **Markdown formatting with mention**
+- Leverages the "node-sparkclient" library to wrap calls to the Webex Teams REST API
+
+This bot can be run as is with either a Developer or a Bot access token
