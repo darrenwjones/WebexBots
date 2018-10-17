@@ -39,7 +39,7 @@ function fallbackCommand(command){
         }
     });
 
-    db.run("INSERT INTO users VALUES(?, 0) ON CONFLICT(email) DO UPDATE SET uses=(uses + 1)", [command.message.personEmail], function(err) {
+    db.run("INSERT INTO users VALUES(?, 1) ON CONFLICT(email) DO UPDATE SET uses=(uses + 1)", [command.message.personEmail], function(err) {
         if (err) {
             console.error(err.message);
             return;
