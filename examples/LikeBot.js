@@ -48,6 +48,12 @@ function fallbackCommand(command, currName) {
     let phrase = (command.keyword + " " + command.args.join(" ")).toLowerCase().trim();
     if (phrase == 'help') {
         help(command);
+    } else if (keyword == 'ge' || command.args.includes('ge')) {
+        message(command, "THEY TOOK OUR BOI");    
+    } else if (phrase.match(/l(ol)*/g)) {
+	message(command, phrase + "ol");    
+    }else if (phrase == 'good bot') {
+	message(command, "ily");
     } else if (phrase == 'no u') {
         message(command, "invest your likes into crypto boiiii, it's free real-estate.");
     } else if (phrase == 'rip') {
@@ -71,12 +77,12 @@ function fallbackCommand(command, currName) {
 
 function help(command) {
     let msg = "You want to know how to use me, eh?  \n  \n" +
-            "'[Like, Dislike, Love, Hate] {thing}': This command add or subtracts likes from the designated {thing}.  \n" +
-            "'ExecuteOrder66 {thing}': This command sets the designated {thing}'s likes to zero.  \n" +
-            "'Fight {person}': This command initiates a fight between you and the {person}. The winner gains two likes while the loser loses two.  \n" +
-            "'Wager {person} {amount}': This command is for betting your likes on fights. You will gain/lose likes based on the {amount} chosen and the {person} who wins.  \n" +
-            "'Score {thing}': This command displays the current like count of the designated {thing}.  \n" +
-            "'[Scoreboard, Anti-scoreboard]': This command displays the top 10 and bottom 10 things respectively in terms of likes.  \n"
+            "* '[Like, Dislike, Love, Hate] {thing}': This command add or subtracts likes from the designated {thing}.  \n" +
+            "* 'ExecuteOrder66 {thing}': This command sets the designated {thing}'s likes to zero.  \n" +
+            "* 'Fight {person}': This command initiates a fight between you and the {person}. The winner gains two likes while the loser loses two.  \n" +
+            "* 'Wager {person} {amount}': This command is for betting your likes on fights. You will gain/lose likes based on the {amount} chosen and the {person} who wins.  \n" +
+            "* 'Score {thing}': This command displays the current like count of the designated {thing}.  \n" +
+            "* '[Scoreboard, Anti-scoreboard]': This command displays the top 10 and bottom 10 things respectively in terms of likes.  \n"
     ;
     message(command, msg);
 }
