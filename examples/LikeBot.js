@@ -12,7 +12,7 @@ if (!process.env.ACCESS_TOKEN) {
     console.log("Could not start as this bot requires a Webex Teams API access token.");
     console.log("Please add env variable ACCESS_TOKEN on the command line");
     console.log("Example: ");
-    console.log("> ACCESS_TOKEN=XXXXXXXXXXXX DEBUG=sparkbot* node TheBetterGifBot.js");
+    console.log("> ACCESS_TOKEN=XXXXXXXXXXXX DEBUG=sparkbot* node LikeBot.js");
     process.exit(1);
 }
 var client = new SparkAPIWrapper(process.env.ACCESS_TOKEN);
@@ -51,9 +51,7 @@ bot.onCommand("fallback", function (word) {
         }
     });
 
-    db.serialize(() => {	
-        fallbackCommand(command, currName);
-    });
+    fallbackCommand(command, currName);
     //db.close();
 });
 	
@@ -61,7 +59,7 @@ function fallbackCommand(command, currName){
 
     let keyword = command.keyword.toLowerCase().trim();
     let args = command.args.join(" ").toLowerCase().trim();    
-    command.keyword = (command.keyword + " " + args).toLowerCase();
+    command.keyword = (command.keyword + " " + args).toLowerCase().trim();
     
     let msg;
     let cmd;
@@ -70,16 +68,25 @@ function fallbackCommand(command, currName){
     if (command.args.length == 0) {
 	cmd = null;
     } else {
-        cmd = command.args[command.args.length - 1].toLowerCase();
+        cmd = command.args[command.args.length - 1].toLowerCase().trim();
     }
 
-    if (cmd == 'like' || cmd == 'dislike') {
+    if (command.keyword == 'no u') {
+	message(command, "invest your likes into crypto boiiii, it's free real-estate.");
+    } else if (command.keyword == 'rip') {
+	message(command, "for frodo");	    
+    } else if (cmd == 'like' || cmd == 'dislike' || cmd == 'love' || cmd == 'hate') {
 
-	var likes = (cmd == 'like' ? 1 : -1);
+	var likes; 
+        if (cmd == 'like' || cmd == 'dislike') {
+	    likes = (cmd == 'like' ? 1 : -1);
+        } else {
+	    likes = (cmd == 'love' ? 2 : -2);
+        }
 	thing = command.keyword.substring(0, (command.keyword.length - (cmd.length + 1)));
 		
         if (currName == thing) {
-	    message(command, "You cannot like or fight yourself, silly willy!");
+	    message(command, "You cannot " + cmd + " yourself, silly willy!");
 	    return;
         }
 
@@ -91,7 +98,7 @@ function fallbackCommand(command, currName){
                 console.error(err.message);
                 return;
             }
-	    msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + cmd + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "'. '"
+	    msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + cmd + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes + " likes. '"
                     + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
             return row ? message(command, msg) : message(command, "no u");
         
@@ -121,7 +128,7 @@ function fallbackCommand(command, currName){
 
 	thing = args;
         if (currName == args) {
-            message(command, "You cannot like or fight yourself, silly willy!");       
+            message(command, "You cannot fight yourself, silly willy!");       
 	    return;
 	}
 			
@@ -171,6 +178,15 @@ function fallbackCommand(command, currName){
             });
 	});
 
+    } else if (cmd == 'executeorder66') {
+	
+	thing = command.keyword.substring(0, (command.keyword.length - (cmd.length + 1)));    
+	if (thing == 'ben' || thing == 'darren' || thing == 'dylan') {
+	    message(command, "Not today, my lord.");
+	} else {
+            run("UPDATE things SET likes=0 WHERE name='" + thing + "'");
+	    message(command, "It will be done my lord. Likes are now 0.");
+	}
     } else {
         message(command, "no u");
     }
