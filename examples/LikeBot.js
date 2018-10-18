@@ -74,7 +74,21 @@ function fallbackCommand(command, currName){
     if (command.keyword == 'no u') {
 	message(command, "invest your likes into crypto boiiii, it's free real-estate.");
     } else if (command.keyword == 'rip') {
-	message(command, "for frodo");	    
+	message(command, "for frodo");
+    } else if (cmd == 'likes') {
+
+	thing = command.keyword.substring(0, (command.keyword.length - (cmd.length + 1)));
+	thing == currName ? who = "u" : who = "they";
+	db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
+
+	    if (err) {
+		console.error(err.message);
+		return;
+	    }
+	
+	    return row ? message(command, who + " haz " + row.likes + " like(s).") : message(command, "Who dat?");
+	});
+
     } else if (cmd == 'like' || cmd == 'dislike' || cmd == 'love' || cmd == 'hate') {
 
 	var likes; 
@@ -100,13 +114,14 @@ function fallbackCommand(command, currName){
             }
 	    msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + cmd + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes + " likes. '"
                     + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
-            return row ? message(command, msg) : message(command, "no u");
-        
+            return row ? message(command, msg) : message(command, "wot happened?");
         });
 
-    } else if (keyword == 'scoreboard' && command.args.length == 0) {
+    } else if ((keyword == 'scoreboard' || 'anti-scoreboard') && command.args.length == 0) {
 
-        db.all("SELECT * FROM things ORDER BY likes DESC LIMIT 10", [], (err, rows) => {
+	let display;    
+	keyword == 'scoreboard' ? display = 'DESC' : display = 'ASC'; 
+        db.all("SELECT * FROM things ORDER BY likes " + display + " LIMIT 10", [], (err, rows) => {
             
             if (err) {
                 console.error(err.message);
@@ -124,6 +139,29 @@ function fallbackCommand(command, currName){
 
         });
 
+    } else if (cmd == 'executeorder66' && command.args.length == 1) {
+
+        thing = command.keyword.substring(0, (command.keyword.length - (cmd.length + 1)));
+        if (thing == 'ben' || thing == 'darren' || thing == 'dylan') {
+            message(command, "Not today, my lord.");
+        } else {
+
+	    db.get("SELECT * FROM things WHERE name='" + thing + "'", [], (err, row) => {
+
+                if (err) {
+                    console.error(err.message);
+                    return;
+                }
+		
+		if (row) {
+		    run("UPDATE things SET likes=0 WHERE name='" + thing + "'");
+		    message(command, "It will be done my lord. Likes are now 0.");
+		} else {
+		    message(command, "My lord, I do not know who that is.");
+		}
+	    });
+        }
+
     } else if (keyword == 'fight') {
 
 	thing = args;
@@ -131,7 +169,7 @@ function fallbackCommand(command, currName){
             message(command, "You cannot fight yourself, silly willy!");       
 	    return;
 	}
-			
+
         db.get("SELECT * FROM things WHERE name='" + args + "' AND human=1", [], (err, row) => {
             
             if (err) {
@@ -139,54 +177,60 @@ function fallbackCommand(command, currName){
                 return;
             }
 
-	    msg = "Hello ladies and gentlemen, before the fight begins, please send in your wagers in the form 'wager {contestant name} {amount}'.  \n" + "You can only wager" +
-                    " up to the amount of likes you have, and if negative, you can wager a maximum of 1.  \n  \n" + "You now have 10 seconds to place your bets...  \n  \n";
-            row ? message(command, msg) : message(command, "Oye? U Wot? You can only fight humans, scrub!");
-	    row ? setTimeout(fightSuccess, 20000, thing, currName, command): null;
-
+	    if (row) {	
+	        msg = "Hello ladies and gentlemen, before the fight begins, please send in your wagers in the form 'wager {contestant name} {amount}'.  \n" + "You can only wager" +
+                        " up to the amount of likes you have, and if negative, you can wager a maximum of 1.  \n  \n" + "You now have 10 seconds to place your bets...  \n  \n";
+		message(command, msg);
+	        setTimeout(fightSuccess, 20000, thing, currName, command);
+	    } else {
+	        message(command, "Oye? U Wot? You can only fight humans, scrub!");
+	    }
         });
 	    
     } else if (keyword == 'wager') {
     	
-	var num = parseInt(command.args[1], 10);    
+	var num = parseInt(command.args[1], 10);
+	thing = command.args[0].toLowerCase().trim();    
         if (command.args.length > 2 || !Number.isInteger(num) || num < 0) {
 	    message(command, "no u");
 	    return;
 	}
 
-	db.serialize(() => {
+	db.serialize(() => {	
 
-	    db.get("SELECT * FROM things WHERE name='" + currName + "' AND human=1", [], (err, row) => {
+	    db.get("SELECT * FROM things WHERE name='" + thing + "' AND human=1", [], (err, row) => {
 
                 if (err) {
                     console.error(err.message);
                     return;
                 }
+		
+		if (!row) {
+		    message(command, "Who dat?");
+                    return;
+		} else {
 
-	        if (num != 1 && row.likes <= 0) {
-		    message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to 1 since you do not have any likes.");
-		    num = 1;
-		    run("UPDATE things SET wagerName='" + command.args[0].toLowerCase() + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
-		    return;
-	        } else if (num > row.likes) { 
-		    message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to equal your like count.");
-		    num = row.likes;
-		    run("UPDATE things SET wagerName='" + command.args[0].toLowerCase() + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
-	            return;
+		    db.get("SELECT * FROM things WHERE name='" + currName + "' AND human=1", [], (err, row) => {
+
+                	if (err) {
+                    	    console.error(err.message);
+                    	    return;
+                	}
+
+                	if (num != 1 && row.likes <= 0) {
+                    	    message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to 1 since you do not have any likes.");
+                    	    run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + 1 + " WHERE name='" + currName + "' AND human=1");
+                	} else if (num > row.likes && num != 1) {
+                    	    message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to equal your like count.");
+                    	    run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + row.likes + " WHERE name='" + currName + "' AND human=1");
+                	} else {
+                    	    run("UPDATE things SET wagerName='" + command.args[0].toLowerCase() + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
+                        }
+                    });
 		}
-		run("UPDATE things SET wagerName='" + command.args[0].toLowerCase() + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
             });
 	});
 
-    } else if (cmd == 'executeorder66') {
-	
-	thing = command.keyword.substring(0, (command.keyword.length - (cmd.length + 1)));    
-	if (thing == 'ben' || thing == 'darren' || thing == 'dylan') {
-	    message(command, "Not today, my lord.");
-	} else {
-            run("UPDATE things SET likes=0 WHERE name='" + thing + "'");
-	    message(command, "It will be done my lord. Likes are now 0.");
-	}
     } else {
         message(command, "no u");
     }
