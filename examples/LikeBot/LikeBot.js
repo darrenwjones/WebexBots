@@ -27,7 +27,7 @@ var db;
 // Fallback command
 //
 bot.onCommand("fallback", function (command) {
-    db = new sqlite3.Database('LikeBot.db', (err) => {
+    db = new sqlite3.Database('WebexBots/examples/LikeBot/LikeBot.db', (err) => {
         if (err) {
             console.error(err.message);
         }
@@ -231,7 +231,7 @@ function message(command, msg) {
 }
 
 function fightSuccess(thing, name, command) {
-    db = new sqlite3.Database('LikeBot.db', (err) => {
+    db = new sqlite3.Database('WebexBots/examples/LikeBot/LikeBot.db', (err) => {
         if (err) {
             console.error(err.message);
         }
