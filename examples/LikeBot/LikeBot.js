@@ -50,7 +50,7 @@ function fallbackCommand(command, currName) {
         help(command);
     } else if (keyword == 'ge' || command.args.includes('ge')) {
         message(command, "THEY TOOK OUR BOI");    
-    } else if (phrase.match(/l(ol)*/g)) {
+    } else if (phrase.match(/^l(ol)+$/g)) {
 	message(command, phrase + "ol");    
     }else if (phrase == 'good bot') {
 	message(command, "ily");
