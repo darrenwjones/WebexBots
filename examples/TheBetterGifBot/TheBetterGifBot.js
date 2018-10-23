@@ -33,7 +33,7 @@ bot.onCommand("fallback", function (command) {
 	
 function fallbackCommand(command){
 
-    db = new sqlite3.Database('TheBetterGifBot.db', (err) => {
+    db = new sqlite3.Database('WebexBots/examples/TheBetterGifBot/TheBetterGifBot.db', (err) => {
         if (err) {
             console.error(err.message);
         }
