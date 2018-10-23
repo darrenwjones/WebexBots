@@ -26,6 +26,7 @@ var db;
 //
 // Fallback command
 //
+//
 bot.onCommand("fallback", function (command) {
     db = new sqlite3.Database('WebexBots/examples/LikeBot/LikeBot.db', (err) => {
         if (err) {
@@ -48,6 +49,8 @@ function fallbackCommand(command, currName) {
     let phrase = (command.keyword + " " + command.args.join(" ")).toLowerCase().trim();
     if (phrase == 'help') {
         help(command);
+    } else if (phrase == 'oof') {
+	message(command, "OOF") 
     } else if (keyword == 'ge' || command.args.includes('ge')) {
         message(command, "THEY TOOK OUR BOI");    
     } else if (phrase.match(/^l(ol)+$/g)) {
