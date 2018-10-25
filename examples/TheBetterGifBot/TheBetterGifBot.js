@@ -20,7 +20,6 @@ var https = require("https");
 var Utils = {};
 module.exports = Utils;
 var fs = require('fs');
-var users = [];
 const sqlite3 = require('sqlite3').verbose();
 var db;
 

@@ -33,11 +33,13 @@ bot.onCommand("fallback", function (command) {
             console.error(err.message);
         }
     });
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
+    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).trim().toLowerCase();
     if (currName == 'benjamin') {
         currName = 'ben';
     } else if (currName == 'zachary') {
         currName = 'zach';
+    } else if (currName == 'jordynn') {
+	currName = 'jojo';
     }
     run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + currName + "', 0, 0, 1, 0, 0) ON CONFLICT(name) DO UPDATE SET human=1");
     fallbackCommand(command, currName);
@@ -178,7 +180,7 @@ function fight(command, currName) {
         }
         if (row) {
             let msg = "Hello ladies and gentlemen, before the fight begins, please send in your wagers in the form 'wager {contestant name} {amount}'.  \n" + "You can only wager" +
-                    " up to the amount of likes you have, and if negative, you can wager a maximum of 1.  \n  \n" + "You now have 10 seconds to place your bets...  \n  \n";
+                    " up to the amount of likes you have, and if negative or 0, you can wager a maximum of 1.  \n  \n" + "You now have 10 seconds to place your bets...  \n  \n";
             message(command, msg);
             setTimeout(fightSuccess, 20000, thing, currName, command);
         } else {

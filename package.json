@@ -27,6 +27,8 @@
     "node-sparkbot": "^1.0.0",
     "node-sparkclient": "^0.1.4",
     "node-sparky": "^4.6.0",
+    "oxford-dictionary": "^1.4.1",
+    "random-word": "^2.0.0",
     "request": "^2.88.0",
     "sqlite": "^3.0.0",
     "sqlite3": "^4.0.2",
