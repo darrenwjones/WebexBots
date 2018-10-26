@@ -39,17 +39,34 @@ function fallbackCommand(command){
         return;	    
     }
 
-    var define = false;
     var phrase = (command.keyword + " " + command.args.join(" ")).trim().toLowerCase();	
     if (phrase == 'pick random') {
 	phrase = randomWord();
-    } else if (command.keyword == 'DEFINE' && command.args.includes('AS')) {
-
-	var define = true;
-	phrase = command.args.slice(0, command.args.indexOf('AS')).join(" ").trim().toLowerCase();
+    } else if (command.keyword == 'DEFINE' && command.args.includes('AS') && command.args.length >= 3) {
+	var word = command.args.slice(0, command.args.indexOf('AS')).join(" ").trim().toLowerCase();
 	var definition = command.args.slice((command.args.indexOf('AS') + 1), command.args.length).join(" ").trim().toLowerCase();
 	var name = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).trim().toLowerCase();
+	writeDef(command, word, definition, name);
+    } else if (command.keyword == 'CHANGE' && command.args.includes('DEFINITION') && command.args.includes('TO') && command.args.length >= 5) {
+	var word = command.args.slice(0, command.args.indexOf('DEFINITION')).join(" ").trim().toLowerCase();
+	var definition = command.args.slice((command.args.indexOf('TO') + 1), command.args.length).join(" ").trim().toLowerCase();
+	var index = command.args[(command.args.indexOf('DEFINITION') + 1)];
+	var name = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).trim().toLowerCase();
+	changeDef(command, word, index, definition, name);
+    } else if (phrase == 'help') {
+	message(command, "Here is how to use me ;)  \n  \n" +
+			"* '{word/phrase}' - The database, Oxford, and Webster will all attempt to define the {word/phrase}.  \n" +
+			"* 'Pick random' - A random word will be chosen to be defined as above.  \n" +
+			"* 'DEFINE {word/phrase} AS {definition}' - A custom {definition} will be set, under your name, for that {word/phrase}.  \n" +
+			"* 'CHANGE {word/phrase} DEFINITION {index} TO {definition}' - Changes your {index}th definition of {word/phrase} to {definition}.  \n"
+	);
+	return;
     }
+    oxford(command, phrase);
+    webster(command, phrase);
+    database(command, phrase);
+}
+function database(command, phrase) {
 
     db = new sqlite3.Database('WebexBots/examples/DictionaryBot/DictionaryBot.db', (err) => {
         if (err) {
@@ -57,22 +74,25 @@ function fallbackCommand(command){
         }
     });
 
-    db.get("SELECT * FROM definitions WHERE phrase='" + phrase + "'", [], (err, row) => {
+    // Change to all
+    db.all("SELECT * FROM definitions WHERE phrase='" + phrase + "'", [], (err, rows) => {
         if (err) {
             console.error(err.message);
             db.close();
-            return;
+            return; 
         }
-        if (row) {
+	
+        rows.forEach((row) => {
+      	    var definitions = row.definition.split('|');
+	    var results = definitions.length;
+	    results > 5 ? results = 5 : results = definitions.length;
             message(command, "According to **" + (row.name.charAt(0).toUpperCase() + row.name.slice(1)) + "**, *" + (row.phrase.charAt(0).toUpperCase()
-                    + row.phrase.slice(1)) + "* is defined as:  \n  \n* " + row.definition);
-        } else {
-	    oxford(command, phrase, define, definition, name);
-	}
+                    + row.phrase.slice(1)) + "* is defined as:  \n  \n* " + definitions.slice(0, results).join("  \n  \n* "));
+        });
     });
 }
 
-function oxford(command, phrase, define, definition, name) {
+function oxford(command, phrase) {
     	
     var options = {
 	app_id : "8749e6b9",
@@ -102,11 +122,15 @@ function oxford(command, phrase, define, definition, name) {
 		}
 	    }
 	}
-	definitions ? message(command, ("According to the **Oxford** Dictionary, *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1))
-		+ "* is defined as:  \n  \n* " + definitions.join("  \n  \n* "))) : webster(command, phrase, define, definition, name);
+	
+	if (definitions) {
+	    var results = definitions.length;
+	    results > 5 ? results = 5 : results = definitions.length;
+	    message(command, ("According to the **Oxford** Dictionary, *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1))
+		    + "* is defined as:  \n  \n* " + definitions.slice(0, results).join("  \n  \n* ")));
+        }
     },
     function(err) {
-        webster(command, phrase, define, definition, name);
     }); 
 }
 
@@ -119,7 +143,7 @@ function message(command, message) {
     });
 }
 
-function webster(command, phrase, define, definition, name) {
+function webster(command, phrase) {
 
     var msg;
     var def;
@@ -147,37 +171,20 @@ function webster(command, phrase, define, definition, name) {
 		        count++;
 		    }
 	        }
-		    console.log(definitions);
-		if (Array.isArray(definitions) && definitions.length) { 
+	
+		if (Array.isArray(definitions) && definitions.length) {
+                    var results = definitions.length;
+                    results > 5 ? results = 5 : results = definitions.length; 
 	            message(command, ("According to the **Merriam-Webster** Dictionary, *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1))
-			    + "* is defined as:  \n  \n* " + definitions.join("  \n  \n* ")));
-		} else {
-
-		    if (define) {
-			writeDef(command, phrase, definition, name);
-		    } else {
-		        message(command, "even idk wot *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1)) + "* is!  \n  \n" +
-			        "If you would like to define this, please send me a message in the form 'DEFINE {word/phrase} AS {definition}'");
-		    }
+			    + "* is defined as:  \n  \n* " + definitions.slice(0, results).join("  \n  \n* ")));
 		}
 	    } catch (err) {
-	        if (define) {
-                    writeDef(command, phrase, definition, name);
-                } else {
-                    message(command, "even idk wot *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1)) + "* is!  \n  \n" +
-                            "If you would like to define this, please send me a message in the form 'DEFINE {word/phrase} AS {definition}'");
-                }
 	    }
 	});
     });
 
     req.on('error', function(err) {
-        if (define) {
-            writeDef(command, phrase, definition, name);
-        } else {
-            message(command, "even idk wot *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1)) + "* is!  \n  \n" +
-                    "If you would like to define this, please send me a message in the form 'DEFINE {word/phrase} AS {definition}'");
-        }
+        message(command, "it looks like I ran into an error! " + err);
     });
     req.end();
 }
@@ -190,12 +197,49 @@ function writeDef(command, phrase, definition, name) {
         }
     });
 
-    db.run("INSERT OR IGNORE INTO definitions VALUES(?, ?, ?)", [phrase, definition, name], function(err) {
+    db.run("INSERT INTO definitions VALUES(?, ?, ?) ON CONFLICT(phrase,name) DO UPDATE SET definition = definition || ?", [phrase, definition, name, ("|" + definition)], function(err) {
         if (err) {
 	    console.error(err.message);
 	    db.close();
             return;
+	} else {
+	    message(command, "The definition for *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1)) + "* has now been set.");
 	}
     });
-    message(command, "The definition for *" + phrase + "* has now been set.");
+}
+
+function changeDef(command, phrase, index, definition, name) {
+
+    db = new sqlite3.Database('WebexBots/examples/DictionaryBot/DictionaryBot.db', (err) => {
+        if (err) {
+            console.error(err.message);
+        }
+    });
+
+    db.get("SELECT * FROM definitions WHERE phrase=? AND name=?", [phrase, name], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            db.close();
+            return;
+        }
+	if (row) {
+	    var definitions = row.definition.split('|');
+	    if (index > definitions.length) {
+		message(command, "invalid index!");
+		return;
+	    }
+	    definitions[index-1] = definition;
+	    var newDef = definitions.join('|');
+            db.run("UPDATE definitions SET definition = ? WHERE phrase = ? AND name = ?", [newDef, phrase, name],
+		     function(err) {
+        	if (err) {
+            	    console.error(err.message);
+            	    db.close();
+            	    return;
+        	} else {
+		    message(command, "Definition " + index + " for *" + (phrase.charAt(0).toUpperCase() + phrase.slice(1)) + "* has now been changed.");
+		}
+    	    });
+        }
+    });
 }

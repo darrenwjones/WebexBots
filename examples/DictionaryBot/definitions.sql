@@ -1,6 +1,7 @@
 CREATE TABLE definitions(
-    phrase TEXT PRIMARY KEY UNIQUE,
+    phrase TEXT,
     definition TEXT,
-    name TEXT
+    name TEXT,
+    UNIQUE (phrase,name)
 );
     
