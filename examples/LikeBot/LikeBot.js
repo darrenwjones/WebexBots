@@ -81,14 +81,7 @@ bot.onCommand("anti-scoreboard", function (command) {
 
 bot.onCommand("score", function (command) {
     let thing = command.args.join(" ");
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	    currName = 'jojo';
-    }
+    currName = getCurrentName(command);
     let who = thing == currName ? "u" : "they";
     db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
         if (err) {
@@ -137,14 +130,7 @@ bot.onCommand("executeorder66", function (command) {
 
 bot.onCommand("fight", function (command) {
     let thing = command.args.join(" ");
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	currName = 'jojo';
-    }
+    currName = getCurrentName(command);
 
     if (currName == thing) {
         message(command, "You cannot fight yourself, silly willy!");
@@ -167,14 +153,7 @@ bot.onCommand("fight", function (command) {
 });
 
 bot.onCommand("register", function (command) {
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	currName = 'jojo';
-    }
+    currName = getCurrentName(command);
     run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + currName + "', 0, 0, 1, 0, 0) ON CONFLICT(name) DO UPDATE SET human=1");
 });
 
@@ -185,14 +164,7 @@ bot.onCommand("wager", function (command) {
         message(command, "That ain't how we wager!");
         return;
     }
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	currName = 'jojo';
-    }
+    currName = getCurrentName(command);
 
     db.serialize(() => {
         db.get("SELECT * FROM things WHERE name='" + thing + "' AND human=1", [], (err, row) => {
@@ -281,14 +253,7 @@ function run(sql) {
 function doLikes(command, likes) {
     let keyword = command.keyword;
     let thing = command.args.join(" ");
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	currName = 'jojo';
-    }
+    currName = getCurrentName(command);
     if (currName == thing) {
         message(command, "You cannot " + keyword + " yourself, silly willy!");
         return;
@@ -304,4 +269,16 @@ function doLikes(command, likes) {
 		+ "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
         return row ? message(command, msg) : message(command, "wot happened?");
     });
+}
+
+function getCurrentName(command) {
+    var currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
+    if (currName == 'benjamin') {
+        currName = 'ben';
+    } else if (currName == 'zachary') {
+        currName = 'zach';
+    } else if (currName == 'jordynn') {
+	currName = 'jojo';
+    }
+    return currName;
 }
