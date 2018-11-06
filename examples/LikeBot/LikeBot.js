@@ -267,7 +267,10 @@ function getCurrentName(command) {
 function doLikes(command, likes) {
     let keyword = command.keyword;
     let thing = command.args.join(" ");
-    if (currName == thing) {
+    let currName = getCurrentName(command);
+    currName = (currName.charAt(0).toUpperCase() + currName.slice(1));
+
+    if (currName.toLowerCase() == thing) {
         message(command, "You cannot " + keyword + " yourself, silly willy!");
         return;
     }
@@ -278,8 +281,8 @@ function doLikes(command, likes) {
             console.error(err.message);
             return;
         }
-        let msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1))
-		        + "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
+        let msg = currName + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes +
+		    " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
         return row ? message(command, msg) : message(command, "wot happened?");
     });
 }
