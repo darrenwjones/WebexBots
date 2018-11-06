@@ -21,66 +21,21 @@ var Utils = {};
 module.exports = Utils;
 var fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-var db;
+var db = new sqlite3.Database('/home/darrenwjones06/WebexBots/examples/LikeBot/LikeBot.db', (err) => {
+    if (err) {
+        console.error(err.message);
+    }
+});
 
 //
 // Fallback command
 //
 //
 bot.onCommand("fallback", function (command) {
-    db = new sqlite3.Database('/home/darrenwjones06/WebexBots/examples/LikeBot/LikeBot.db', (err) => {
-        if (err) {
-            console.error(err.message);
-        }
-    });
-    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).trim().toLowerCase();
-    if (currName == 'benjamin') {
-        currName = 'ben';
-    } else if (currName == 'zachary') {
-        currName = 'zach';
-    } else if (currName == 'jordynn') {
-	currName = 'jojo';
-    }
-    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + currName + "', 0, 0, 1, 0, 0) ON CONFLICT(name) DO UPDATE SET human=1");
-    fallbackCommand(command, currName);
+    message(command, "no u");
 });
 
-function fallbackCommand(command, currName) {
-
-    let keyword = command.keyword.toLowerCase().trim();
-    let phrase = (command.keyword + " " + command.args.join(" ")).toLowerCase().trim();
-    if (phrase == 'help') {
-        help(command);
-    } else if (phrase == 'oof') {
-	message(command, "OOF") 
-    } else if (keyword == 'ge' || command.args.includes('ge')) {
-        message(command, "THEY TOOK OUR BOI");    
-    } else if (phrase.match(/^l(ol)+$/g)) {
-	message(command, phrase + "ol");    
-    }else if (phrase == 'good bot') {
-	message(command, "ily");
-    } else if (phrase == 'no u') {
-        message(command, "invest your likes into crypto boiiii, it's free real-estate.");
-    } else if (phrase == 'rip') {
-        message(command, "for frodo");
-    } else if (keyword == 'score') {
-        displayLikes(command, currName);
-    } else if (keyword == 'like' || keyword == 'dislike' || keyword == 'love' || keyword == 'hate') {
-        addLikes(command, currName);
-    } else if (phrase == 'scoreboard' || phrase == 'anti-scoreboard') {
-        scoreboard(command);
-    } else if (keyword == 'executeorder66') {
-        message(command, "I cannot do that anymore, my lord. I am so very sorry for my failures");
-    } else if (keyword == 'fight') {
-        fight(command, currName);
-    } else if (keyword == 'wager') {
-        wager(command, currName);
-    } else {
-        message(command, "no u");
-    }
-}
-
-function help(command) {
+bot.onCommand("help", function (command) {
     let msg = "You want to know how to use me, eh?  \n  \n" +
             "* '[Like, Dislike, Love, Hate] {thing}': This command add or subtracts likes from the designated {thing}.  \n" +
             "* 'ExecuteOrder66 {thing}': This command sets the designated {thing}'s likes to zero.  \n" +
@@ -90,10 +45,28 @@ function help(command) {
             "* '[Scoreboard, Anti-scoreboard]': This command displays the top 10 and bottom 10 things respectively in terms of likes.  \n"
     ;
     message(command, msg);
-}
+});
 
-function displayLikes(command, currName) {
-    let thing = command.args.join(" ").toLowerCase().trim();
+bot.onCommand(["scoreboard", "anti-scoreboard"], function (command) {
+    let display = command.keyword == 'scoreboard' ? 'DESC' : 'ASC';
+    db.all("SELECT * FROM things ORDER BY likes " + display + " LIMIT 10", [], (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+        let top10 = [];
+        let i = 0;
+        rows.forEach((row) => {
+            top10[i] = ((row.name.charAt(0).toUpperCase() + row.name.slice(1)) + ": " + row.likes);
+            i = (i + 1);
+        });
+        let msg = top10.join("  \n");
+        message(command, msg);
+    });
+});
+
+bot.onCommand("score", function (command) {
+    let thing = command.args.join(" ");
     let who = thing == currName ? "u" : "they";
     db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
         if (err) {
@@ -102,11 +75,11 @@ function displayLikes(command, currName) {
         }
         row ? message(command, who + " haz " + row.likes + " like(s).") : message(command, "Who dat?");
     });
-}
+});
 
-function addLikes(command, currName) {
-    let keyword = command.keyword.toLowerCase().trim();
-    let thing = command.args.join(" ").toLowerCase().trim();
+bot.onCommand(["like", "dislike", "love", "hate"], function (command) {
+    let keyword = command.keyword;
+    let thing = command.args.join(" ");
     let likes;
     if (keyword == 'like' || keyword == 'dislike') {
         likes = keyword == 'like' ? 1 : -1;
@@ -128,28 +101,30 @@ function addLikes(command, currName) {
 		+ "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
         return row ? message(command, msg) : message(command, "wot happened?");
     });
-}
+});
 
-function scoreboard(command) {
-    let display = (command.keyword + " " + command.args.join(" ")).toLowerCase().trim() == 'scoreboard' ? 'DESC' : 'ASC';
-    db.all("SELECT * FROM things ORDER BY likes " + display + " LIMIT 10", [], (err, rows) => {
-        if (err) {
-            console.error(err.message);
-            return;
-        }
-        let top10 = [];
-        let i = 0;
-        rows.forEach((row) => {
-            top10[i] = ((row.name.charAt(0).toUpperCase() + row.name.slice(1)) + ": " + row.likes);
-            i = (i + 1);
+bot.onCommand("executeorder66", function (command) {
+    let thing = command.args.join(" ");
+    if (thing == 'ben' || thing == 'darren' || thing == 'dylan') {
+        message(command, "Not today, my lord.");
+    } else {
+        db.get("SELECT * FROM things WHERE name='" + thing + "'", [], (err, row) => {
+            if (err) {
+                console.error(err.message);
+                return;
+            }
+            if (row) {
+                run("UPDATE things SET likes=0 WHERE name='" + thing + "'");
+                message(command, "It will be done my lord. Likes are now 0.");
+            } else {
+                message(command, "My lord, I do not know who that is.");
+            }
         });
-        let msg = top10.join("  \n");
-        message(command, msg);
-    });
-}
+    }
+});
 
-function fight(command, currName) {
-    let thing = command.args.join(" ").toLowerCase().trim();
+bot.onCommand("fight", function (command) {
+    let thing = command.args.join(" ");
     if (currName == thing) {
         message(command, "You cannot fight yourself, silly willy!");
         return;
@@ -168,11 +143,23 @@ function fight(command, currName) {
             message(command, "Oye? U Wot? You can only fight humans!");
         }
     });
-}
+});
 
-function wager(command, currName) {
-    let num = parseInt(command.args[1].trim(), 10);
-    let thing = command.args[0].toLowerCase().trim();
+bot.onCommand("register", function (command) {
+    let currName = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).toLowerCase();
+    if (currName == 'benjamin') {
+        currName = 'ben';
+    } else if (currName == 'zachary') {
+        currName = 'zach';
+    } else if (currName == 'jordynn') {
+	currName = 'jojo';
+    }
+    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + currName + "', 0, 0, 1, 0, 0) ON CONFLICT(name) DO UPDATE SET human=1");
+});
+
+bot.onCommand("wager", function (command) {
+    let num = parseInt(command.args[1], 10);
+    let thing = command.args[0];
     if (command.args.length > 2 || !Number.isInteger(num) || num < 0) {
         message(command, "That ain't how we wager!");
         return;
@@ -199,13 +186,13 @@ function wager(command, currName) {
                         message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to equal your like count.");
                         run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + row.likes + " WHERE name='" + currName + "' AND human=1");
                     } else {
-                        run("UPDATE things SET wagerName='" + command.args[0].toLowerCase() + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
+                        run("UPDATE things SET wagerName='" + command.args[0] + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
                     }
                 });
             }
         });
     });
-}
+});
 
 function message(command, msg) {
     client.createMessage(command.message.roomId, msg, { "markdown": "true" }, function (err, response) {
