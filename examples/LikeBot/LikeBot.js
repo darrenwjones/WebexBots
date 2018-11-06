@@ -165,6 +165,7 @@ bot.onCommand("wager", function (command) {
         return;
     }
     currName = getCurrentName(command);
+    currName = (currName.charAt(0).toUpperCase() + currName.slice(1));	
 
     db.serialize(() => {
         db.get("SELECT * FROM things WHERE name='" + thing + "' AND human=1", [], (err, row) => {
@@ -176,19 +177,20 @@ bot.onCommand("wager", function (command) {
                 message(command, "Who dat?");
                 return;
             } else {
-                db.get("SELECT * FROM things WHERE name='" + currName + "' AND human=1", [], (err, row) => {
+                db.get("SELECT * FROM things WHERE name='" + currName.toLowerCase() + "' AND human=1", [], (err, row) => {
                     if (err) {
                         console.error(err.message);
                         return;
                     }
                     if (num != 1 && row.likes <= 0) {
-                        message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to 1 since you do not have any likes.");
-                        run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + 1 + " WHERE name='" + currName + "' AND human=1");
+                        message(command, "Nice try, " + currName + "! I have switched your wager to 1 since you do not have any likes.");
+                        run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + 1 + " WHERE name='" + currName.toLowerCase() + "' AND human=1");
                     } else if (num > row.likes && num != 1) {
-                        message(command, "Nice try, " + (currName.charAt(0).toUpperCase() + currName.slice(1)) + "! I have switched your wager to equal your like count.");
-                        run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + row.likes + " WHERE name='" + currName + "' AND human=1");
+                        message(command, "Nice try, " + currName + "! I have switched your wager to equal your like count.");
+                        run("UPDATE things SET wagerName='" + thing + "', wagerLikes=" + row.likes + " WHERE name='" + currName.toLowerCase() + "' AND human=1");
                     } else {
-                        run("UPDATE things SET wagerName='" + command.args[0] + "', wagerLikes=" + num + " WHERE name='" + currName + "' AND human=1");
+			message(command, currName + ", your wager has been set to " + num);
+                        run("UPDATE things SET wagerName='" + command.args[0] + "', wagerLikes=" + num + " WHERE name='" + currName.toLowerCase() + "' AND human=1");
                     }
                 });
             }
@@ -221,7 +223,7 @@ function fightSuccess(thing, name, command) {
         run("UPDATE things SET likes=(likes - 2) WHERE name='" + thing + "' AND human=1");
         run("UPDATE things SET likes=(likes + 2) WHERE name='" + name + "' AND human=1");
         msg = "" + (name.charAt(0).toUpperCase() + name.slice(1)) + " hath slayed " + (thing.charAt(0).toUpperCase() + thing.slice(1)) +
-                " and has pried 2 likes from their cold dead hands...  \n" + "Took quite a fall, didn't we, Master " + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "?" +
+                " and has pried 2 likes from their cold dead hands...  \n  \n" + "Took quite a fall, didn't we, Master " + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "?" +
                 " And why do we fall, " + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "? So we can learn to pick ourselves back up.";
         message(command, msg);
     } else {
