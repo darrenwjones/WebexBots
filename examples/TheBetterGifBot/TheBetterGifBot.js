@@ -32,19 +32,6 @@ bot.onCommand("fallback", function (command) {
 	
 function fallbackCommand(command){
 
-    db = new sqlite3.Database('WebexBots/examples/TheBetterGifBot/TheBetterGifBot.db', (err) => {
-        if (err) {
-            console.error(err.message);
-        }
-    });
-
-    db.run("INSERT INTO users VALUES(?, 1) ON CONFLICT(email) DO UPDATE SET uses=(uses + 1)", [command.message.personEmail], function(err) {
-        if (err) {
-            console.error(err.message);
-            return;
-        }
-    });
-    
     if (command == null) {
         
 	client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",

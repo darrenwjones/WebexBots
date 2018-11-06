@@ -68,7 +68,7 @@ function fallbackCommand(command){
 }
 function database(command, phrase) {
 
-    db = new sqlite3.Database('WebexBots/examples/DictionaryBot/DictionaryBot.db', (err) => {
+    db = new sqlite3.Database('/home/darrenwjones06/WebexBots/examples/DictionaryBot/DictionaryBot.db', (err) => {
         if (err) {
             console.error(err.message);
         }

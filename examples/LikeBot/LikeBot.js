@@ -28,7 +28,7 @@ var db;
 //
 //
 bot.onCommand("fallback", function (command) {
-    db = new sqlite3.Database('WebexBots/examples/LikeBot/LikeBot.db', (err) => {
+    db = new sqlite3.Database('/home/darrenwjones06/WebexBots/examples/LikeBot/LikeBot.db', (err) => {
         if (err) {
             console.error(err.message);
         }
@@ -70,7 +70,7 @@ function fallbackCommand(command, currName) {
     } else if (phrase == 'scoreboard' || phrase == 'anti-scoreboard') {
         scoreboard(command);
     } else if (keyword == 'executeorder66') {
-        executeOrder66(command);
+        message(command, "I cannot do that anymore, my lord. I am so very sorry for my failures");
     } else if (keyword == 'fight') {
         fight(command, currName);
     } else if (keyword == 'wager') {
@@ -117,14 +117,15 @@ function addLikes(command, currName) {
         message(command, "You cannot " + keyword + " yourself, silly willy!");
         return;
     }
-    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + thing + "', " + likes + ", 0, 0, 0, 0) ON CONFLICT(name) DO UPDATE SET likes=(likes + " + likes + ")");
+    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + thing + "', " + likes + ", 0, 0, 0, 0) ON CONFLICT(name)"
+	    + " DO UPDATE SET likes=(likes + " + likes + ")");
     db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
         if (err) {
             console.error(err.message);
             return;
         }
-        let msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes + " likes. '"
-                + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
+        let msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1))
+		+ "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
         return row ? message(command, msg) : message(command, "wot happened?");
     });
 }
@@ -145,26 +146,6 @@ function scoreboard(command) {
         let msg = top10.join("  \n");
         message(command, msg);
     });
-}
-
-function executeOrder66(command) {
-    let thing = command.args.join(" ").toLowerCase().trim();
-    if (thing == 'ben' || thing == 'darren' || thing == 'dylan') {
-        message(command, "Not today, my lord.");
-    } else {
-        db.get("SELECT * FROM things WHERE name='" + thing + "'", [], (err, row) => {
-            if (err) {
-                console.error(err.message);
-                return;
-            }
-            if (row) {
-                run("UPDATE things SET likes=0 WHERE name='" + thing + "'");
-                message(command, "It will be done my lord. Likes are now 0.");
-            } else {
-                message(command, "My lord, I do not know who that is.");
-            }
-        });
-    }
 }
 
 function fight(command, currName) {
