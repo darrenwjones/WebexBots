@@ -92,20 +92,31 @@ bot.onCommand("score", function (command) {
     });
 });
 
-bot.onCommand("like", function (command) {
-    doLikes(command, "1");
-});
-
-bot.onCommand("dislike", function (command) {
-    doLikes(command, "-1");
-});
-
-bot.onCommand("love", function (command) {
-    doLikes(command, "2");
-});
-
-bot.onCommand("hate", function (command) {
-    doLikes(command, "-2");
+bot.onCommand(("like", "dislike", "love", "hate"), function (command) {
+    let keyword = command.keyword;
+    let thing = command.args.join(" ");
+    let likes;
+    if (keyword == 'like' || keyword == 'dislike') {
+        likes = keyword == 'like' ? 1 : -1;
+    } else {
+        likes = keyword == 'love' ? 2 : -2;
+    }
+    currName = getCurrentName(command);
+    if (currName == thing) {
+        message(command, "You cannot " + keyword + " yourself, silly willy!");
+        return;
+    }
+    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + thing + "', " + likes + ", 0, 0, 0, 0) ON CONFLICT(name)"
+	    + " DO UPDATE SET likes=(likes + " + likes + ")");
+    db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+        let msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1))
+		+ "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
+        return row ? message(command, msg) : message(command, "wot happened?");
+    });
 });
 
 bot.onCommand("executeorder66", function (command) {
@@ -247,27 +258,6 @@ function run(sql) {
             console.error(err.message);
             return;
         }
-    });
-}
-
-function doLikes(command, likes) {
-    let keyword = command.keyword;
-    let thing = command.args.join(" ");
-    currName = getCurrentName(command);
-    if (currName == thing) {
-        message(command, "You cannot " + keyword + " yourself, silly willy!");
-        return;
-    }
-    run("INSERT INTO things(name, likes, fightTime, human, wagerName, wagerLikes) VALUES('" + thing + "', " + likes + ", 0, 0, 0, 0) ON CONFLICT(name)"
-	    + " DO UPDATE SET likes=(likes + " + likes + ")");
-    db.get("SELECT * FROM things WHERE name=?", [thing], (err, row) => {
-        if (err) {
-            console.error(err.message);
-            return;
-        }
-        let msg = (currName.charAt(0).toUpperCase() + currName.slice(1)) + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1))
-		+ "' and added " + likes + " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
-        return row ? message(command, msg) : message(command, "wot happened?");
     });
 }
 
