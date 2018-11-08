@@ -22,14 +22,16 @@ module.exports = Utils;
 var fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 var db;
-
+var CryptoJS = require("crypto-js");
+var reportID;
+var wsse;
 //
 // Fallback command
 //
 bot.onCommand("fallback", function (command) {
     fallbackCommand(command);
 });
-	
+
 function fallbackCommand(command){
 
     if (command == null) {
