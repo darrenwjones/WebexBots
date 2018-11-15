@@ -22,15 +22,60 @@ module.exports = Utils;
 var fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 var db;
-var CryptoJS = require("crypto-js");
-var reportID;
-var wsse;
+const axios = require('axios');
 //
 // Fallback command
 //
 bot.onCommand("fallback", function (command) {
+
+    axios({
+    method: 'GET',
+     url: 'https://api.ciscospark.com/v1/people/' + command.message.personId,
+     headers: 
+      { Authorization: 'Bearer ' + process.env.ACCESS_TOKEN },
+  }).then(function (response) {
+    if (response.data.orgId != 'Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi83Y2M5M2U1OC0yNDcwLTQ1ZTMtOTgxMi04NTZmZWQxMmMyNmU') {
+        client.createMessage(command.message.roomId, "U AINT FROM KOHLS", { "markdown":"true" }, function(err, response) {
+        if (err) {
+            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
+            return;
+        }
+	return;
+    }); 
+    } else {
+       client.createMessage(command.message.roomId, "U IS FROM KOHLS", { "markdown":"true" }, function(err, response) {
+        if (err) {
+            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
+            return;
+        }
+    });
+    }
+  })
+    .catch(function (error) {
+      console.log(error);
+    });
+
     fallbackCommand(command);
 });
+
+bot.onCommand("roomid", function (command) {
+    client.createMessage(command.message.roomId, command.message.roomId, { "markdown":"true" }, function(err, response) {
+        if (err) {
+            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
+            return;
+        }
+    });	
+});
+
+bot.onCommand("personid", function (command) {
+    client.createMessage(command.message.roomId, command.message.personId, { "markdown":"true" }, function(err, response) {
+        if (err) {
+            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
+            return;
+        }
+    });
+});
+
 
 function fallbackCommand(command){
 

@@ -281,8 +281,12 @@ function doLikes(command, likes) {
             console.error(err.message);
             return;
         }
-        let msg = currName + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes +
+	if (row) {
+            let msg = currName + " " + keyword + "d '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' and added " + likes +
 		    " likes. '" + (thing.charAt(0).toUpperCase() + thing.slice(1)) + "' now has " + row.likes + " like(s).";
-        return row ? message(command, msg) : message(command, "wot happened?");
+            message(command, msg)
+	} else {
+	    message(command, "wot happened?");
+	}
     });
 }
