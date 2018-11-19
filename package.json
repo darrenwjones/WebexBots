@@ -10,7 +10,9 @@
     "Express"
   ],
   "scripts": {
-    "start": "node examples/devnet/bot.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./examples/TheBetterGifBot/TheBetterGifBot.js",
+    "nodemon": "nodemon ./examples/TheBetterGifBot/TheBetterGifBot.js"
   },
   "homepage": "https://github.com/CiscoDevNet/node-sparkbot-samples#readme",
   "repository": {
@@ -20,6 +22,7 @@
   "author": "Stève Sfartz (Cisco DevNet)",
   "license": "MIT",
   "dependencies": {
+    "nodemon": "^1.18.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "crypto-js": "^3.1.9-1",
