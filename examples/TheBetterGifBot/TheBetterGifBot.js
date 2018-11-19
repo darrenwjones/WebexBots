@@ -43,7 +43,7 @@ bot.onCommand("fallback", function (command) {
 	return;
     }); 
     } else {
-       client.createMessage(command.message.roomId, "U IS FROM KOHLS", { "markdown":"true" }, function(err, response) {
+       client.createMessage(command.message.roomId, "U IS FROM KOHLS BRO", { "markdown":"true" }, function(err, response) {
         if (err) {
             console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
             return;
