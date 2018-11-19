@@ -32,7 +32,7 @@ var db = new sqlite3.Database('/home/darrenwjones06/WebexBots/examples/LikeBot/L
 //
 //
 bot.onCommand("fallback", function (command) {
-    message(command, "no u fefe");
+    message(command, "no u bro beans");
 });
 
 bot.onCommand("help", function (command) {
