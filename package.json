@@ -1,7 +1,7 @@
 {
-  "name": "node-sparbot-samples",
-  "version": "v2.0.0",
-  "description": "Examples of Webex Teams bots in Node.js",
+  "name": "WebexBots",
+  "version": "v1.0",
+  "description": "Various Webex Teams bots in Node.js",
   "keywords": [
     "SparkBot",
     "Webex Teams",
@@ -9,20 +9,14 @@
     "NodeJS",
     "Express"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./examples/TheBetterGifBot/TheBetterGifBot.js",
-    "nodemon": "nodemon ./examples/TheBetterGifBot/TheBetterGifBot.js"
-  },
-  "homepage": "https://github.com/CiscoDevNet/node-sparkbot-samples#readme",
+  "homepage": "https://github.com/darrenwjones/WebexBots#README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CiscoDevNet/node-sparkbot-samples.git"
+    "url": "git+https://github.com/darrenwjones/WebexBots.git"
   },
-  "author": "Stève Sfartz (Cisco DevNet)",
+  "author": "Darren Jones",
   "license": "MIT",
   "dependencies": {
-    "nodemon": "^1.18.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "crypto-js": "^3.1.9-1",
