@@ -53,7 +53,7 @@ function fallbackCommand(command){
 	var index = command.args[(command.args.indexOf('DEFINITION') + 1)];
 	var name = command.message.personEmail.substring(0, command.message.personEmail.indexOf('.')).trim().toLowerCase();
 	changeDef(command, word, index, definition, name);
-    } else if (phrase == 'help1') {
+    } else if (phrase == 'help') {
 	message(command, "Here is how to use me ;)  \n  \n" +
 			"* '{word/phrase}' - The database, Oxford, and Webster will all attempt to define the {word/phrase}.  \n" +
 			"* 'Pick random' - A random word will be chosen to be defined as above.  \n" +
