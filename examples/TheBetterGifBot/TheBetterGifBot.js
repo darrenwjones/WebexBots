@@ -41,7 +41,6 @@ function fallbackCommand(command){
 		});
         return;	    
 	}
-	//test
 
     command.keyword = (command.keyword + " " + command.args.join(" "));
     var message;
