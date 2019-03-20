@@ -1,4 +1,0 @@
-CREATE TABLE users(
-    email TEXT PRIMARY KEY UNIQUE,
-    uses INTEGER
-);

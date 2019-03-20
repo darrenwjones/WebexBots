@@ -20,8 +20,6 @@ var https = require("https");
 var Utils = {};
 module.exports = Utils;
 var fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
-var db;
 
 //
 // Fallback command
@@ -29,25 +27,6 @@ var db;
 bot.onCommand("fallback", function (command) {
     fallbackCommand(command);
 });
-
-bot.onCommand("roomid", function (command) {
-    client.createMessage(command.message.roomId, command.message.roomId, { "markdown":"true" }, function(err, response) {
-        if (err) {
-            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
-            return;
-        }
-    });	
-});
-
-bot.onCommand("personid", function (command) {
-    client.createMessage(command.message.roomId, command.message.personId, { "markdown":"true" }, function(err, response) {
-        if (err) {
-            console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
-            return;
-        }
-    });
-});
-
 
 function fallbackCommand(command){
 
