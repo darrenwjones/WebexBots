@@ -32,13 +32,13 @@ function fallbackCommand(command){
 
     if (command == null) {
         
-	client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
-		{ "markdown":"true" }, function(err, response) {
-	    if (err) {
-		console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
-		return;
-	    }
-	});
+		client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
+			{ "markdown":"true" }, function(err, response) {
+	    		if (err) {
+					console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
+					return;
+	    		}
+		});
         return;	    
     }
 
@@ -61,52 +61,53 @@ function fallbackCommand(command){
 
 	    try {	
 	        
-		message = Buffer.concat(chunks).toString();
+			message = Buffer.concat(chunks).toString();
 	        message = JSON.parse(message);
 	        data = message.data;
 	    } catch (err) {
 	        
-		client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
-		        { "markdown":"true" }, function(err, response) {
-	 	    if (err) {
-		        console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
-		        return;
-		    }
+			client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
+		    	{ "markdown":"true" }, function(err, response) {
+	 	    		if (err) {
+		        		console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
+		        		return;
+		    		}
 	        });
 	        return;
 	    }
 
 	    if (data.length != 0 && data.length != null) {	
 	        
-		client.createMessage(command.message.roomId, "", { "file": data[Math.floor(Math.random()*data.length)].images.downsized.url },
-			function(err, response) {
-	            if (err) {
-		        console.log("WARNING: could not post gif to room." + command.message.roomId);
-		        return;
-	            }
+			client.createMessage(command.message.roomId, "", { "file": data[Math.floor(Math.random()*data.length)].images.downsized.url },
+				function(err, response) {
+	         		if (err) {
+		        		console.log("WARNING: could not post gif to room." + command.message.roomId);
+		        		return;
+	            	}
 	        });
 	    } else {
 		
-		client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
-		        { "markdown":"true" }, function(err, response) {
-		    if (err) {
-			console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
-	   		    return;
-		    }
-		});
+			client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
+		    	{ "markdown":"true" }, function(err, response) {
+		    		if (err) {
+						console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
+	   		    		return;
+		    		}
+			});
 	    }
 	});
     });
 
     req.on('error', function(err) {
 	
-	client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
-		{ "markdown":"true" }, function(err, response) {
-	    if (err) {
-		console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
-		return;
-	    }
+		client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
+			{ "markdown":"true" }, function(err, response) {
+	    		if (err) {
+					console.log("WARNING: Could not post fallback message after finding no gifs." + command.message.roomId);
+					return;
+	    		}
+		});
 	});
-    });
+	
     req.end();
 }
