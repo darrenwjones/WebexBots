@@ -20,10 +20,21 @@ var https = require("https");
 var Utils = {};
 module.exports = Utils;
 var fs = require('fs');
+var messageID = null;
 
 //
 // Fallback command
 //
+//
+bot.onCommand("delete.dis", function (command) {
+   client.deleteMessage(messageID, function(err, response) {
+	if (err) {
+	    console.log("WARNING: Could not delete the previous message. " + messageID);
+            return;
+        }
+    });
+});
+
 bot.onCommand("fallback", function (command) {
     fallbackCommand(command);
 });
@@ -80,6 +91,8 @@ function fallbackCommand(command){
 	        
 			client.createMessage(command.message.roomId, "", { "file": data[Math.floor(Math.random()*data.length)].images.downsized.url },
 				function(err, response) {
+
+				messageID = response.id;	
 	         		if (err) {
 		        		console.log("WARNING: could not post gif to room." + command.message.roomId);
 		        		return;
