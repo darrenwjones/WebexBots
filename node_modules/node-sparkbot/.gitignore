@@ -1,0 +1,8 @@
+# node artefacts
+node_modules/
+npm-debug.log
+package-lock.json
+
+# IDE
+.idea/
+.vscode/

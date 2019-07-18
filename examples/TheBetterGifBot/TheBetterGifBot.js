@@ -43,8 +43,8 @@ function fallbackCommand(command){
 
     if (command == null) {
         
-		client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
-			{ "markdown":"true" }, function(err, response) {
+	client.createMessage(command.message.roomId, "Sorry, I couldn't find any gifs... try searching with a new keyword or phrase.",
+	        { "markdown":"true" }, function(err, response) {
 	    		if (err) {
 					console.log("WARNING: Could not post fallback message when the keyword was null." + command.message.roomId);
 					return;
@@ -89,7 +89,7 @@ function fallbackCommand(command){
 
 	    if (data.length != 0 && data.length != null) {	
 	        
-			client.createMessage(command.message.roomId, "", { "file": data[Math.floor(Math.random()*data.length)].images.downsized.url },
+			client.createMessage(command.message.roomId, "", { "file": data[Math.floor(Math.random()*data.length)].images.downsized.url, "type": "image/gif" },
 				function(err, response) {
 
 				messageID = response.id;	
