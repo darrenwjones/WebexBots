@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""Webex Teams Guest-Issuer data model.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+)
+
+from builtins import *
+
+
+class GuestIssuerTokenBasicPropertiesMixin(object):
+    """Guest issuer token basic properties"""
+
+    @property
+    def access_token(self):
+        return self._json_data.get('token')
+
+    @property
+    def expires_in(self):
+        return self._json_data.get('expiresIn')

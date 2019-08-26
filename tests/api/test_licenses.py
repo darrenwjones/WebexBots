@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""WebexTeamsAPI Licenses API fixtures and tests.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+import pytest
+
+import webexteamssdk
+
+
+# Helper Functions
+
+def is_valid_license(obj):
+    return isinstance(obj, webexteamssdk.License) and obj.id is not None
+
+
+def are_valid_licenses(iterable):
+    return all([is_valid_license(obj) for obj in iterable])
+
+
+# Fixtures
+
+@pytest.fixture(scope="session")
+def licenses_list(api, me):
+    return list(api.licenses.list(orgId=me.orgId))
+
+
+@pytest.fixture(scope="session")
+def licenses_dict(licenses_list):
+    return {lic.name: lic for lic in licenses_list}
+
+
+# Tests
+
+def test_list_licenses(licenses_list):
+    assert are_valid_licenses(licenses_list)
+
+
+def test_get_license_details(api, licenses_list):
+    assert len(licenses_list) >= 1
+    license_id = licenses_list[0].id
+    details = api.licenses.get(license_id)
+    assert is_valid_license(details)

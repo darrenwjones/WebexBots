@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""Package metadata.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+
+__title__ = 'webexteamssdk'
+__description__ = 'Community-developed Python SDK for the Webex Teams APIs'
+__url__ = 'https://github.com/CiscoDevNet/webexteamssdk'
+__download_url__ = 'https://pypi.python.org/pypi/webexteamssdk'
+__author__ = 'Chris Lunsford'
+__author_email__ = 'chrlunsf@cisco.com'
+__copyright__ = "Copyright (c) 2016-2019 Cisco Systems, Inc."
+__license__ = "MIT"

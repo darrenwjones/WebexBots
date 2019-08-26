@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""WebexTeamsAPI Organizations API fixtures and tests.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,38 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+import pytest
+
+import webexteamssdk
+
+
+# Helper Functions
+
+def is_valid_organization(obj):
+    return isinstance(obj, webexteamssdk.Organization) and obj.id is not None
+
+
+def are_valid_organizations(iterable):
+    return all([is_valid_organization(obj) for obj in iterable])
+
+
+# Fixtures
+
+@pytest.fixture(scope="session")
+def organizations_list(api):
+    return list(api.organizations.list())
+
+
+# Tests
+
+def test_list_organizations(organizations_list):
+    assert are_valid_organizations(organizations_list)
+
+
+def test_get_organization_by_id(api, organizations_list):
+    assert len(organizations_list) >= 1
+    organization_id = organizations_list[0].id
+    organization = api.organizations.get(organization_id)
+    assert is_valid_organization(organization)

@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""Webex Teams License data model.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,38 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+)
+
+from builtins import *
+
+
+class LicenseBasicPropertiesMixin(object):
+    """License basic properties."""
+
+    @property
+    def id(self):
+        """A unique identifier for the license."""
+        return self._json_data.get('id')
+
+    @property
+    def name(self):
+        """Name of the licensed feature."""
+        return self._json_data.get('name')
+
+    @property
+    def totalUnits(self):
+        """Total number of license units allocated."""
+        return self._json_data.get('totalUnits')
+
+    @property
+    def consumedUnits(self):
+        """Total number of license units consumed."""
+        return self._json_data.get('consumedUnits')

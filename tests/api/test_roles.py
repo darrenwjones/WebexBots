@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""WebexTeamsAPI Roles API fixtures and tests.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+import pytest
+
+import webexteamssdk
+
+
+# Helper Functions
+
+def is_valid_role(obj):
+    return isinstance(obj, webexteamssdk.Role) and obj.id is not None
+
+
+def are_valid_roles(iterable):
+    return all([is_valid_role(obj) for obj in iterable])
+
+
+# Fixtures
+
+@pytest.fixture(scope="session")
+def roles_list(api):
+    return list(api.roles.list())
+
+
+@pytest.fixture(scope="session")
+def roles_dict(roles_list):
+    return {role.name: role for role in roles_list}
+
+
+# Tests
+
+def test_list_roles(roles_list):
+    assert are_valid_roles(roles_list)
+
+
+def test_get_role_by_id(api, roles_list):
+    assert len(roles_list) >= 1
+    role_id = roles_list[0].id
+    role = api.roles.get(role_id)
+    assert is_valid_role(role)

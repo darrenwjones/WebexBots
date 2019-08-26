@@ -1,4 +1,5 @@
-The MIT License (MIT)
+# -*- coding: utf-8 -*-
+"""Webex Teams Access-Token data model.
 
 Copyright (c) 2016-2019 Cisco and/or its affiliates.
 
@@ -19,3 +20,38 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+)
+
+from builtins import *
+
+
+class AccessTokenBasicPropertiesMixin(object):
+    """Access Token basic properties."""
+
+    @property
+    def access_token(self):
+        """Webex Teams access token."""
+        return self._json_data.get('access_token')
+
+    @property
+    def expires_in(self):
+        """Access token expiry time (in seconds)."""
+        return self._json_data.get('expires_in')
+
+    @property
+    def refresh_token(self):
+        """Refresh token used to request a new/refreshed access token."""
+        return self._json_data.get('refresh_token')
+
+    @property
+    def refresh_token_expires_in(self):
+        """Refresh token expiry time (in seconds)."""
+        return self._json_data.get('refresh_token_expires_in')
