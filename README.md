@@ -25,19 +25,3 @@ Features illustrated by this example:
 - Leverages the "node-sparkclient" library to wrap calls to the Webex Teams REST API
 
 This bot can be run as is with either a Developer or a Bot access token
-
-
-
-## [LikeBot](examples/LikeBot.js)
-
-A simple template to start from.
-
-Features illustrated by this example:
-- Ability to like/dislike & love/hate things with the command "[like,dislike,love,hate] {thing}"
-- "Scoreboard" command that displays top 10 liked objects/users. "Antiscoreboard" displays the bottom 10.
-- Ability to trigger fights from you against other users with the command "fight {User}"
-- Ability to wager on these fights with the command "wager {User} {Amount}"
-- **Markdown formatting with mention**
-- Leverages the "node-sparkclient" library to wrap calls to the Webex Teams REST API
-
-This bot can be run as is with either a Developer or a Bot access token
